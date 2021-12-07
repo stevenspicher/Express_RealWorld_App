@@ -1,0 +1,12 @@
+<html>
+  <body>
+    <h1>World</h1>
+    <script>
+      fetch("http://localhost:2000/")
+        .then((res) => res.text())
+        .then((data) => {
+          alarm(data);
+        });
+    </script>
+  </body>
+</html>
