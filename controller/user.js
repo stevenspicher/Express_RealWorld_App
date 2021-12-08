@@ -1,11 +1,35 @@
 const { User } = require('../model');
+const jwt = require('../util/jwt');
+const { jwtSecret } = require('../config/config.defaults');
 
 // Authentication
 // POST /api/users/login
 exports.login = async (req, res, next) => {
     try {
         // Deal with request
+        // 1. data validation
+        // 2. generate token
+        const user = req.user.toJSON(); // get user and convert to json data
+        const token = await jwt.sign({
+            userID: user._id
+        }, jwtSecret,{
+            expiresIn: 60 * 60 * 24 // one day
+        });
+        // 3. send ok response to clients including token
+        delete user.password;
+        res.status(200).json({
+            ...user,
+            token
+        })
+
+        // user = req.user.toJSON();
+        // delete user.password;
+        // res.status(201).json({
+        //     user
+        // });
+
         res.send('post /users/login');
+
     } catch (err) {
         next(err);
     };
@@ -42,8 +66,11 @@ exports.register = async (req, res, next) => {
 exports.getUser = async (req, res, next) => {
     try {
         // Deal with request
-        // JSON.parse('adfa') // it will have errors
-        res.send('get /user');
+        // console.log(req.headers);
+
+        res.status(200).json({
+            user: req.user
+        });
     } catch (err) {
         next(err);
     };

@@ -1,6 +1,9 @@
 const express = require('express');
-const router = express.Router();
+const auth = require('../middleware/auth');
 const articleController = require('../controller/article');
+const articleValidator = require('../validator/article');
+
+const router = express.Router();
 
 // List Articles
 // GET /api/articles
@@ -16,7 +19,7 @@ router.get('/:slug', articleController.getArticle);
 
 // Create Article
 // POST /api/articles
-router.post('/', articleController.createArticle);
+router.post('/', auth, articleValidator.createArticle, articleController.createArticle);
 
 // Update Article
 router.put('/:slug', articleController.updateArticle);

@@ -5,6 +5,9 @@ const userController = require('../controller/user');
 // user validator
 const userValidator = require('../validator/user');
 
+// Authentication middleware
+const auth = require('../middleware/auth');
+
 const router = express.Router();
 
 // Authentication
@@ -18,11 +21,11 @@ router.post('/users', userValidator.register, userController.register); // data 
 
 // Get Current User
 // GET /api/users
-router.get('/user', userController.getUser);
+router.get('/user', auth, userController.getUser);
 
 // Update User
 // PUT /api/user
-router.put('/user', userController.updateUser);
+router.put('/user', auth, userController.updateUser);
 
 // Get Profile
 // GET /api/profiles/:username
