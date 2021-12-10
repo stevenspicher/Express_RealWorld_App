@@ -12,7 +12,7 @@ exports.login = async (req, res, next) => {
         const user = req.user.toJSON(); // get user and convert to json data
         const token = await jwt.sign({
             userID: user._id
-        }, jwtSecret,{
+        }, jwtSecret, {
             expiresIn: 60 * 60 * 24 // one day
         });
         // 3. send ok response to clients including token
@@ -20,7 +20,7 @@ exports.login = async (req, res, next) => {
         res.status(200).json({
             ...user,
             token
-        })
+        });
 
         // user = req.user.toJSON();
         // delete user.password;

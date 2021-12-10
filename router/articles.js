@@ -14,32 +14,32 @@ router.get('/', articleController.listArticles);
 router.get('/feed', articleController.feedArticles);
 
 // Get Article
-// GET /api/articles/:slug
-router.get('/:slug', articleController.getArticle);
+// GET /api/articles/:articleId
+router.get('/:articleId', articleValidator.getArticle, articleController.getArticle);
 
 // Create Article
 // POST /api/articles
 router.post('/', auth, articleValidator.createArticle, articleController.createArticle);
 
 // Update Article
-router.put('/:slug', articleController.updateArticle);
+router.put('/:articleId', auth, articleValidator.updateArticle, articleController.updateArticle);
 
 // Delete Article
-router.delete('/:slug', articleController.deleteArticle);
+router.delete('/:articleId', articleController.deleteArticle);
 
 // Add Comments to an Article
-router.post('/:slug/comments', articleController.addComment);
+router.post('/:articleId/comments', articleController.addComment);
 
 // Get Comments from an Article
-router.get('/:slug/comments', articleController.getComment);
+router.get('/:articleId/comments', articleController.getComment);
 
 // Delete Comments
-router.delete('/:slug/comments/:id', articleController.deleteArticle);
+router.delete('/:articleId/comments/:id', articleController.deleteArticle);
 
 // Favorite Article
-router.post('/:slug/favorite', articleController.favoriteArticle);
+router.post('/:articleId/favorite', articleController.favoriteArticle);
 
 // Unfavorite Article
-router.delete('/:slug/favorite', articleController.unfavoriteArticle);
+router.delete('/:articleId/favorite', articleController.unfavoriteArticle);
 
 module.exports = router;

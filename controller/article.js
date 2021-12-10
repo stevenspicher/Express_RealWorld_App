@@ -1,11 +1,45 @@
-const { Article } = require('../model'); // Article
+const { Article, User } = require('../model'); // Article
 
 // List Articles
 // GET /api/articles
 exports.listArticles = async (req, res, next) => {
     try {
         // Deal with request
-        res.send('get /articles');
+        // console.log(req.query)
+        const {
+            limit = 20,
+            offset = 0,
+            tag,
+            author,
+            sort
+        } = req.query; // 1 get params from clients
+
+        const filter = {}
+
+        // Check tags
+        if (tag) {
+            filter.tagList = tag;
+        };
+        // Check author from DB
+        if (author) {
+            const user = await User.findOne({ username: author });
+            filter.author = user ? user._id : null;
+        };
+
+        const articles = await Article.find() // find all
+            .limit(Number.parseInt(limit))  // How many do you want to get when you retrieve DB.
+            .skip(Number.parseInt(offset))  // How many do you want to skip when you retrieving DB.
+            .sort({                         // sorting
+                // createdAt: 1             // ascending with time
+                // createdAt: -1          // descending with time
+                createdAt: sort
+            }); // How many do you want to skip when retrieving DB.
+        // const articleCount = await Article.countDocuments(); // count all articles in the db
+        const articleCount = Object.keys(articles).length; // counts the number of printed articles
+        res.status(200).json({
+            articles,
+            articleCount
+        });
     } catch (err) {
         next(err);
     };
@@ -23,7 +57,18 @@ exports.feedArticles = async (req, res, next) => {
 exports.getArticle = async (req, res, next) => {
     try {
         // Deal with request
-        res.send('get /articles/:slug');
+        // 1. get id
+        // console.log(req.params.articleId);
+        // 2. use id to check db
+        const article = await Article.findById(req.params.articleId)
+            .populate('author');//.execPopulate() // When retrieving data from the DB we do not need to use
+        // execPopulate(), because we are retrieing DB data now.
+        if (!article) {
+            return res.status(404).end();
+        };
+        res.status(200).json({
+            article
+        });
     } catch (err) {
         next(err);
     };
@@ -33,11 +78,13 @@ exports.createArticle = async (req, res, next) => {
     try {
         // Deal with request
         const article = new Article(req.body.article);
+        article.author = req.user._id;
+        article.populate('author').execPopulate(); // Return author information instead of userID
+        // We use userID to check DB, and find user information.
         await article.save();
         res.status(201).json({
             article
         });
-        res.send('post /articles');
     } catch (err) {
         next(err);
     };
