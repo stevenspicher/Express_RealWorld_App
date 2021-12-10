@@ -93,7 +93,15 @@ exports.createArticle = async (req, res, next) => {
 exports.updateArticle = async (req, res, next) => {
     try {
         // Deal with request
-        res.send('put /articles/:slug');
+        const article = req.article; // We have mounted it.
+        const bodyArticle = req.body.article;       // req.body.article is the one we mounted to the body
+        article.title = bodyArticle.title || article.title;
+        article.description = bodyArticle.description || article.description;
+        article.body = bodyArticle.body || article.body;
+        await article.save();
+        res.status(200).json({
+            article
+        });
     } catch (err) {
         next(err);
     };
@@ -102,7 +110,9 @@ exports.updateArticle = async (req, res, next) => {
 exports.deleteArticle = async (req, res, next) => {
     try {
         // Deal with request
-        res.send('delete /articles/:slug');
+        const article = req.article; // We have mounted it
+        await article.remove();
+        res.status(204).end();
     } catch (err) {
         next(err);
     };

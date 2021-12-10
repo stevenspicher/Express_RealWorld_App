@@ -25,7 +25,7 @@ router.post('/', auth, articleValidator.createArticle, articleController.createA
 router.put('/:articleId', auth, articleValidator.updateArticle, articleController.updateArticle);
 
 // Delete Article
-router.delete('/:articleId', articleController.deleteArticle);
+router.delete('/:articleId', auth, articleValidator.deleteArticle, articleController.deleteArticle);
 
 // Add Comments to an Article
 router.post('/:articleId/comments', articleController.addComment);
